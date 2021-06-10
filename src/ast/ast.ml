@@ -23,11 +23,9 @@ type binop =
 type unop = Not | Neg
 
 type exp =
-  (* Literals *)
   | IntLit of int
   | StringLit of string
   | BoolLit of bool
-  (* Array and Record construction *)
   | Array of exp list
   | Location of location
   | Record of id * exp list
@@ -38,7 +36,7 @@ type exp =
   | If of {cond: exp; true': exp; false': exp}
   | While of exp * exp
   | Break
-  | Let of {decls: decl list; body: exp}
+  | Let of {decls: decl list; body: exp list}
   | Seq of exp list
 (* TODO: Match *)
 
