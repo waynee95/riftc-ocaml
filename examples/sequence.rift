@@ -1,0 +1,11 @@
+let
+  var a = 1
+in
+  a = (
+        print("hello");
+        print("world\n");
+        a = a + 1;
+        a
+      );
+  print_int(a)
+end
