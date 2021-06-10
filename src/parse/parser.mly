@@ -1,0 +1,147 @@
+%{
+open Ast
+%}
+
+%token <string> ID
+%token <string> TYPE_ID
+%token <int> INT_LIT
+%token <string> STRING_LIT
+%token TYPE_INT             "i64"
+%token TYPE_BOOL            "bool"
+%token TYPE_STRING          "string"
+%token TRUE                 "true"
+%token FALSE                "false"
+%token COMMA                ","
+%token COLON                ":"
+%token SEMICOLON            ";"
+%token LPAREN               "("
+%token RPAREN               ")"
+%token LBRACKET             "["
+%token RBRACKET             "]"
+%token LCURLY               "{"
+%token RCURLY               "}"
+%token DOT                  "."
+%token ARROW                "=>"
+%token PLUS                 "+"
+%token MINUS                "-"
+%token MULT                 "*"
+%token DIV                  "/"
+%token REM                  "%"
+%token LT                   "<"
+%token LE                   "<="
+%token GT                   ">"
+%token GE                   ">="
+%token AND                  "&&"
+%token OR                   "||"
+%token EQ                   "=="
+%token NOTEQ                "!="
+%token NOT                  "!"
+%token ASSIGN               "="
+%token IF                   "if"
+%token THEN                 "then"
+%token ELSE                 "else"
+%token WHILE                "while"
+%token DO                   "do"
+%token LET                  "let"
+%token IN                   "in"
+%token END                  "end"
+%token BREAK                "break"
+%token FN                   "fn"
+%token EXTERN               "extern"
+%token VAR                  "var"
+%token VAL                  "val"
+%token TYPE                 "type"
+%token EOF
+
+/* from lowest precedence */
+%nonassoc ELSE
+%nonassoc ASSIGN
+%nonassoc DO
+
+%left OR
+%left AND
+%left EQ NOTEQ
+%left LT LE GE GT
+%left PLUS MINUS
+%left MULT DIV REM
+%right NOT
+
+/* to highest precedence */
+
+%start <Ast.exp> prog
+
+%%
+
+prog: exp EOF { $1 }
+
+exp:
+  | INT_LIT { IntLit($1) }
+  | STRING_LIT { StringLit($1) }
+  | "false" { BoolLit(true) }
+  | "true" { BoolLit(false) }
+  | "[" separated_list(COMMA, exp) "]" { Array($2) }
+  | TYPE_ID "{" separated_list(COMMA, exp) "}" { Record($1, $3) }
+  | lvalue { Location($1) }
+  | ID "(" separated_list(COMMA, exp) ")" { FuncCall { name=$1; args=$3 } }
+  | "(" separated_list(SEMICOLON, exp) ")" { Seq($2) }
+  | "-" exp { UnOp(Neg, $2) }
+  | "!" exp { UnOp(Not, $2) }
+  | exp binop exp { BinOp($1, $2, $3) }
+  | lvalue "=" exp { Assign($1, $3) }
+  | "if" exp "then" exp "else" exp { If { cond=$2; true'=$4; false'=$6 } }
+  | "let" list(decl) "in" exp "end" { Let { decls=$2; body=$4 } }
+  | "while" exp "do" exp { While($2, $4) }
+  | "break" { Break }
+  (* TODO: Match *)
+
+lvalue:
+  | ID { Id($1) }
+  | lvalue "." ID { FieldAccess($1, $3) }
+  | lvalue "[" exp "]" { Index($1, $3) }
+
+decl:
+  | "type" TYPE_ID "=" "{" separated_list(COMMA, field) "}" { RecordDecl($2, $5) }
+  (* TODO: EnumDecl *)
+  | vartyp ID maybe_typ_sig "=" exp { VarDecl { name=$2; typ=$3; value=$5; vartyp=$1 } }
+  | "fn" ID "(" separated_list(COMMA, field) ")" maybe_typ_sig "=" exp
+    {
+      FuncDecl { name=$2; params=$4; returnTyp=$6; body=$8 }
+    }
+  | "extern" ID "(" separated_list(COMMA, field) ")" maybe_typ_sig
+    {
+      ExternDecl { name=$2; params=$4; returnTyp=$6; }
+    }
+
+field:
+  | ID ":" typ { ($1, $3) }
+
+vartyp:
+  | "var" { Var }
+  | "val" { Val }
+
+maybe_typ_sig:
+  |   { None }
+  | ":" typ { Some($2) }
+
+typ:
+  | "i64" { TInt }
+  | "bool" { TBool }
+  | "string" { TString }
+  | "[" typ "]" { TArray($2) }
+  | TYPE_ID { TCustom($1) }
+  (* TODO: FuncTyp *)
+
+%inline binop:
+  | "+" { Plus }
+  | "-" { Minus }
+  | "*" { Mult }
+  | "/" { Div }
+  | "%" { Rem }
+  | "<" { LessThan }
+  | "<=" { LessEqual }
+  | ">" { GreaterThan }
+  | ">=" { GreaterEqual }
+  | "&&" { And }
+  | "||" { Or }
+  | "==" { Eq }
+  | "!=" { NotEq }
