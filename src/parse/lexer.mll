@@ -70,7 +70,7 @@ rule read = parse
   | "false" { FALSE }
   | whitespace { read lexbuf }
   | "#" { read_single_line_comment lexbuf }
-  | int { INT_LIT (int_of_string (Lexing.lexeme lexbuf)) }
+  | int { INT_LIT(Int64.of_string (Lexing.lexeme lexbuf)) }
   | type_id { TYPE_ID (Lexing.lexeme lexbuf) }
   | id { ID (Lexing.lexeme lexbuf) }
   | '"' { read_string_lit (Buffer.create 17) lexbuf }

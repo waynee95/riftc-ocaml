@@ -23,7 +23,7 @@ type binop =
 type unop = Not | Neg
 
 type exp =
-  | IntLit of int
+  | IntLit of int64
   | StringLit of string
   | BoolLit of bool
   | Array of exp list

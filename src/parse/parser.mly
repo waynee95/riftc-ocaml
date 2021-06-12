@@ -4,7 +4,7 @@ open Ast
 
 %token <string> ID
 %token <string> TYPE_ID
-%token <int> INT_LIT
+%token <int64> INT_LIT
 %token <string> STRING_LIT
 %token TYPE_INT             "i64"
 %token TYPE_BOOL            "bool"
