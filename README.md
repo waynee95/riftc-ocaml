@@ -5,8 +5,8 @@
 ## Progress
 
 - [x] Lexer
-- [ ] Parser
-- [ ] AST
+- [x] Parser
+- [x] AST
 - [ ] Type Checking
 - [ ] IR Gen
 - [ ] Backend
