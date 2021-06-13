@@ -4,6 +4,14 @@ type id = string
 
 type typ = TInt | TString | TBool | TArray of typ | TCustom of string
 
+let rec show_t typ =
+  match typ with
+  | TInt -> "i64"
+  | TString -> "string"
+  | TBool -> "bool"
+  | TArray t' -> "[" ^ show_t t' ^ "]"
+  | TCustom t' -> t'
+
 type field = id * typ
 
 type binop =
@@ -21,7 +29,25 @@ type binop =
   | Eq
   | NotEq
 
+let show_binop op =
+  match op with
+  | Plus -> "+"
+  | Minus -> "-"
+  | Mult -> "*"
+  | Div -> "/"
+  | Rem -> "%"
+  | LessThan -> "<"
+  | LessEqual -> "<="
+  | GreaterThan -> ">"
+  | GreaterEqual -> ">="
+  | And -> "&&"
+  | Or -> "||"
+  | Eq -> "=="
+  | NotEq -> "!="
+
 type unop = Not | Neg
+
+let show_unop op = match op with Not -> "!" | Neg -> "-"
 
 type exp =
   | IntLit of int64
