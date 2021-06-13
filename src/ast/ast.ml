@@ -29,7 +29,7 @@ type exp =
   | Array of exp list
   | Location of location
   | Record of id * exp list
-  | FuncCall of {name: id; args: exp list}
+  | FuncCall of {name: id; args: exp list option}
   | BinOp of exp * binop * exp
   | UnOp of unop * exp
   | Assign of location * exp

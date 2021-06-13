@@ -84,7 +84,7 @@ exp:
   | "[" separated_list(COMMA, exp) "]" { Array($2) }
   | TYPE_ID "{" separated_list(COMMA, exp) "}" { Record($1, $3) }
   | lvalue { Location($1) }
-  | ID "(" separated_list(COMMA, exp) ")" { FuncCall { name=$1; args=$3 } }
+  | call_or_constructor { $1 }
   | "(" separated_list(SEMICOLON, exp) ")" { Seq($2) }
   | "-" exp { UnOp(Neg, $2) }
   | "!" exp { UnOp(Not, $2) }
@@ -139,6 +139,11 @@ vartyp:
 maybe_typ_sig:
   |   { None }
   | ":" typ { Some($2) }
+
+call_or_constructor:
+  | TYPE_ID { FuncCall { name=$1; args=None } }
+  | TYPE_ID "(" separated_nonempty_list(COMMA, exp) ")" { FuncCall { name=$1; args=Some($3) } }
+  | ID "(" separated_nonempty_list(COMMA, exp) ")" { FuncCall { name=$1; args=Some($3) } }
 
 typ:
   | "i64" { TInt }
