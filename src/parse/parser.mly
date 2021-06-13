@@ -89,7 +89,7 @@ exp:
   | exp binop exp { BinOp($1, $2, $3) }
   | lvalue "=" exp { Assign($1, $3) }
   | "if" exp "then" exp "else" exp { If { cond=$2; true'=$4; false'=$6 } }
-  | "let" list(decl) "in" separated_list(SEMICOLON, exp) "end" { Let { decls=$2; body=$4 } }
+  | "let" list(decl) "in" separated_list(SEMICOLON, exp) "end" { Let { decls=$2; body=Seq($4) } }
   | "while" exp "do" exp { While($2, $4) }
   | "break" { Break }
   (* TODO: Match *)

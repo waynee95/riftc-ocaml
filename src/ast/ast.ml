@@ -36,7 +36,7 @@ type exp =
   | If of {cond: exp; true': exp; false': exp}
   | While of exp * exp
   | Break
-  | Let of {decls: decl list; body: exp list}
+  | Let of {decls: decl list; body: exp}
   | Seq of exp list
 (* TODO: Match *)
 
