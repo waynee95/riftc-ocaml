@@ -106,7 +106,7 @@ pattern:
   | "else" { CatchAll }
 
 lvalue:
-  | ID { Id($1) }
+  | ID { Id($1, None) }
   | lvalue "." ID { FieldAccess($1, $3) }
   | lvalue "[" exp "]" { Index($1, $3) }
 

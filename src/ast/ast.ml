@@ -1,3 +1,5 @@
+type scope = Global | Parameter | Local
+
 type id = string
 
 type typ = TInt | TString | TBool | TArray of typ | TCustom of string
@@ -40,7 +42,7 @@ type exp =
   | Match of exp * match_case list
 
 and location =
-  | Id of id
+  | Id of id * scope option
   | FieldAccess of location * id
   | Index of location * exp
 
