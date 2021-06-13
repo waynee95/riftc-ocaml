@@ -3,8 +3,9 @@ let
 
   fn length(l: List): i64 =
     match l with
-    | Nil => 0
-    | Cons(x, xs) => 1 + length(xs)
+      | Nil => 0
+      | Cons(x, xs) => 1 + length(xs)
+    end
 
   val l1 = Cons(1, Cons(2, Cons(3, Nil)))
 in

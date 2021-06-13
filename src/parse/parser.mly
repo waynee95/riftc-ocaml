@@ -59,8 +59,6 @@ open Ast
 /* from lowest precedence */
 %nonassoc ELSE
 %nonassoc DO
-
-%right ARROW
 %right ASSIGN
 
 %left OR
@@ -94,7 +92,7 @@ exp:
   | "let" list(decl) "in" separated_list(SEMICOLON, exp) "end" { Let { decls=$2; body=Seq($4) } }
   | "while" exp "do" exp { While($2, $4) }
   | "break" { Break }
-  | "match" exp "with" nonempty_list(matchcase) { Match($2, $4) }
+  | "match" exp "with" nonempty_list(matchcase) "end" { Match($2, $4) }
 
 matchcase:
   | "|" pattern "=>" exp { MatchCase($2, $4) }

@@ -16,7 +16,8 @@ let
     fn size(t: Tree): i64 =
       match t with
         | Leaf => 0
-        | Node(val, left, right) => 1 + size(left) + size(right)
+        | Node(x, left, right) => 1 + size(left) + size(right)
+      end
 in
   print_int(size(t1))
 end

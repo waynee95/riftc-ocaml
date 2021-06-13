@@ -1,6 +1,5 @@
 type id = string
 
-(* Rift basic data types *)
 type typ = TInt | TString | TBool | TArray of typ | TCustom of string
 
 type field = id * typ

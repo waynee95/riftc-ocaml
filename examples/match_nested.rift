@@ -3,12 +3,13 @@ let
 
   fn foo(p: Person): bool =
     match p with
-      | { "Bob", age } => (
+      | { "Bob", age } =>
         match age with
-        | 42 => true
-        | else => false
-      )
+         | 42 => true
+         | else => false
+        end
       | else => false
+    end
 in
   foo(Person { "Bob", 42 })
 end
