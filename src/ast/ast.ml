@@ -47,7 +47,8 @@ and location =
 
 and decl =
   | RecordDecl of id * field list
-  (* TODO: EnumDecl *)
+  | EnumDecl of id * decl list
+  | VariantDecl of id * typ list option
   | VarDecl of {name: id; typ: typ option; value: exp; vartyp: vartyp}
   | FuncDecl of {name: id; params: field list; returnTyp: typ option; body: exp}
   | ExternDecl of {name: id; params: field list; returnTyp: typ option}

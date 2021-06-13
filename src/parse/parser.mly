@@ -113,7 +113,7 @@ lvalue:
 
 decl:
   | "type" TYPE_ID "=" "{" separated_list(COMMA, field) "}" { RecordDecl($2, $5) }
-  (* TODO: EnumDecl *)
+  | "type" TYPE_ID "=" separated_nonempty_list(BAR, variant_decl) { EnumDecl($2, $4) }
   | vartyp ID maybe_typ_sig "=" exp { VarDecl { name=$2; typ=$3; value=$5; vartyp=$1 } }
   | "fn" ID "(" separated_list(COMMA, field) ")" maybe_typ_sig "=" exp
     {
@@ -123,6 +123,10 @@ decl:
     {
       ExternDecl { name=$2; params=$4; returnTyp=$6; }
     }
+
+variant_decl:
+  | TYPE_ID "(" separated_nonempty_list(COMMA, typ) ")" { VariantDecl($1, Some($3)) }
+  | TYPE_ID { VariantDecl($1, None) }
 
 field:
   | ID ":" typ { ($1, $3) }
