@@ -34,6 +34,7 @@ rule read = parse
   | ";" { SEMICOLON }
   | "." { DOT }
   | "=>" { ARROW }
+  | "|" { BAR }
   | "+" { PLUS }
   | "-" { MINUS }
   | "*" { MULT }
@@ -65,6 +66,8 @@ rule read = parse
   | "extern" { EXTERN }
   | "var" { VAR }
   | "val" { VAL }
+  | "match" { MATCH }
+  | "with" { WITH }
   | "type" { TYPE }
   | "true" { TRUE }
   | "false" { FALSE }

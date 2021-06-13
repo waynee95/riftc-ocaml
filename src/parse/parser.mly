@@ -22,6 +22,7 @@ open Ast
 %token RCURLY               "}"
 %token DOT                  "."
 %token ARROW                "=>"
+%token BAR                  "|"
 %token PLUS                 "+"
 %token MINUS                "-"
 %token MULT                 "*"
@@ -50,13 +51,17 @@ open Ast
 %token EXTERN               "extern"
 %token VAR                  "var"
 %token VAL                  "val"
+%token MATCH                "match"
+%token WITH                 "with"
 %token TYPE                 "type"
 %token EOF
 
 /* from lowest precedence */
 %nonassoc ELSE
-%nonassoc ASSIGN
 %nonassoc DO
+
+%right ARROW
+%right ASSIGN
 
 %left OR
 %left AND
@@ -75,10 +80,7 @@ open Ast
 prog: exp EOF { $1 }
 
 exp:
-  | INT_LIT { IntLit($1) }
-  | STRING_LIT { StringLit($1) }
-  | "false" { BoolLit(true) }
-  | "true" { BoolLit(false) }
+  | literal { $1 }
   | "[" separated_list(COMMA, exp) "]" { Array($2) }
   | TYPE_ID "{" separated_list(COMMA, exp) "}" { Record($1, $3) }
   | lvalue { Location($1) }
@@ -92,7 +94,17 @@ exp:
   | "let" list(decl) "in" separated_list(SEMICOLON, exp) "end" { Let { decls=$2; body=Seq($4) } }
   | "while" exp "do" exp { While($2, $4) }
   | "break" { Break }
-  (* TODO: Match *)
+  | "match" exp "with" nonempty_list(matchcase) { Match($2, $4) }
+
+matchcase:
+  | "|" pattern "=>" exp { MatchCase($2, $4) }
+
+pattern:
+  | literal { ValuePattern($1) }
+  (* TODO: Constructor *)
+  | ID { VariablePattern($1) }
+  | "{" separated_list(COMMA, pattern) "}" { RecordPattern($2) }
+  | "else" { CatchAll }
 
 lvalue:
   | ID { Id($1) }
@@ -131,6 +143,12 @@ typ:
   | TYPE_ID { TCustom($1) }
   (* TODO: FuncTyp *)
 
+literal:
+  | INT_LIT { IntLit($1) }
+  | STRING_LIT { StringLit($1) }
+  | "true" { BoolLit(true) }
+  | "false" { BoolLit(false) }
+
 %inline binop:
   | "+" { Plus }
   | "-" { Minus }
@@ -145,3 +163,4 @@ typ:
   | "||" { Or }
   | "==" { Eq }
   | "!=" { NotEq }
+

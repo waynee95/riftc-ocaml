@@ -38,7 +38,7 @@ type exp =
   | Break
   | Let of {decls: decl list; body: exp}
   | Seq of exp list
-(* TODO: Match *)
+  | Match of exp * match_case list
 
 and location =
   | Id of id
@@ -54,3 +54,11 @@ and decl =
 
 (* Determines whether a variable is immutable=val or mutable=var *)
 and vartyp = Var | Val
+
+and match_case = MatchCase of pattern * exp
+
+and pattern =
+  | ValuePattern of exp
+  | RecordPattern of pattern list
+  | VariablePattern of id
+  | CatchAll
