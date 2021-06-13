@@ -61,5 +61,6 @@ and match_case = MatchCase of pattern * exp
 and pattern =
   | ValuePattern of exp
   | RecordPattern of pattern list
+  | ConstructorPattern of id * pattern list option
   | VariablePattern of id
   | CatchAll

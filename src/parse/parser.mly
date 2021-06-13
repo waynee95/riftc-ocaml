@@ -101,7 +101,8 @@ matchcase:
 
 pattern:
   | literal { ValuePattern($1) }
-  (* TODO: Constructor *)
+  | TYPE_ID "(" separated_nonempty_list(COMMA, pattern) ")" { ConstructorPattern($1, Some($3)) }
+  | TYPE_ID { ConstructorPattern($1, None) }
   | ID { VariablePattern($1) }
   | "{" separated_list(COMMA, pattern) "}" { RecordPattern($2) }
   | "else" { CatchAll }
