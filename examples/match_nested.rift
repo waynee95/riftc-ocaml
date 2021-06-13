@@ -1,0 +1,14 @@
+let
+  type Person = { name: string, age: i64 }
+
+  fn foo(p: Person): bool =
+    match p with
+      | { "Bob", age } => (
+        match age with
+        | 42 => true
+        | else => false
+      )
+      | else => false
+in
+  foo(Person { "Bob", 42 })
+end
